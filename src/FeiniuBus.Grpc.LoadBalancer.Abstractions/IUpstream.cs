@@ -2,6 +2,6 @@
 {
     public interface IUpstream
     {
-        ServiceEndPoint Peer();
+        ServiceEndPoint Peer(string serviceName);
     }
 }

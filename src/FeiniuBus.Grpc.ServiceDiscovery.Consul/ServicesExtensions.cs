@@ -1,4 +1,5 @@
 ﻿using System;
+using FeiniuBus.Grpc.LoadBalancer.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,8 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
             services.TryAdd(ServiceDescriptor
                 .Singleton<IPostConfigureOptions<ServiceDiscoveryConsulOptions>,
                     PostConfigureServiceDiscoveryConsulOptions>());
+
+            services.AddSingleton<IServiceDiscovery, ConsulServiceDiscovery>();
 
             return services;
         }

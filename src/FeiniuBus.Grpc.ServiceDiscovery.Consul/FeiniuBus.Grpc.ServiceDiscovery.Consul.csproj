@@ -5,4 +5,9 @@
   <ItemGroup>
     <ProjectReference Include="..\FeiniuBus.Grpc.LoadBalancer.Abstractions\FeiniuBus.Grpc.LoadBalancer.Abstractions.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Consul" Version="0.7.2.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
+  </ItemGroup>
 </Project>

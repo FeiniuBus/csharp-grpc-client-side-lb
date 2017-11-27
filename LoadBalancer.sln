@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeiniuBus.Grpc.LoadBalancer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeiniuBus.Grpc.LoadBalancer.RoundRobin", "src\FeiniuBus.Grpc.LoadBalancer.RoundRobin\FeiniuBus.Grpc.LoadBalancer.RoundRobin.csproj", "{06FEDE89-527C-4C69-92B8-6A9E92331CC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeiniuBus.Grpc.ServiceDiscovery", "src\FeiniuBus.Grpc.ServiceDiscovery\FeiniuBus.Grpc.ServiceDiscovery.csproj", "{C5AF4ACA-BCE7-4431-AF74-B63761267051}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeiniuBus.Grpc.ServiceDiscovery.Consul", "src\FeiniuBus.Grpc.ServiceDiscovery.Consul\FeiniuBus.Grpc.ServiceDiscovery.Consul.csproj", "{10AED070-BBAE-4775-9652-C6C76BC05367}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{06FEDE89-527C-4C69-92B8-6A9E92331CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06FEDE89-527C-4C69-92B8-6A9E92331CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06FEDE89-527C-4C69-92B8-6A9E92331CC7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5AF4ACA-BCE7-4431-AF74-B63761267051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5AF4ACA-BCE7-4431-AF74-B63761267051}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5AF4ACA-BCE7-4431-AF74-B63761267051}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5AF4ACA-BCE7-4431-AF74-B63761267051}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10AED070-BBAE-4775-9652-C6C76BC05367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10AED070-BBAE-4775-9652-C6C76BC05367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10AED070-BBAE-4775-9652-C6C76BC05367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10AED070-BBAE-4775-9652-C6C76BC05367}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

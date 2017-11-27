@@ -3,12 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace FeiniuBus.Grpc.LoadBalancer.RoundRobin
+namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
 {
-    public static class ServiceExtensions
+    public static class ServicesExtensions
     {
-        public static IServiceCollection AddRoundRobin(this IServiceCollection services,
-            Action<RoundRobinOptions> configuration)
+        public static IServiceCollection AddConsulServiceDiscovery(this IServiceCollection services,
+            Action<ServiceDiscoveryConsulOptions> configuration)
         {
             if (services == null)
             {
@@ -22,8 +22,9 @@ namespace FeiniuBus.Grpc.LoadBalancer.RoundRobin
 
             services.AddOptions();
             services.TryAdd(ServiceDescriptor
-                .Singleton<IPostConfigureOptions<RoundRobinOptions>, PostConfigureRoundRobinOptions>());
-            
+                .Singleton<IPostConfigureOptions<ServiceDiscoveryConsulOptions>,
+                    PostConfigureServiceDiscoveryConsulOptions>());
+
             return services;
         }
     }

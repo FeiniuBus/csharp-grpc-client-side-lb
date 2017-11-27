@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FeiniuBus.Grpc.LoadBalancer.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -12,10 +14,14 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
         {
             _options = options.Value;
         }
-        
-        public IEnumerable<ServiceEndPoint> FindServiceEndpoint(string name)
+
+        public Task<IEnumerable<ServiceEndPoint>> FindServiceEndpointAsync(string name)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,14 +1,5 @@
-﻿using System.Collections.Generic;
-
-namespace FeiniuBus.Grpc.LoadBalancer.Abstractions
-{
-    public class ServiceQueryResult
-    {
-        public ulong LastIndex { get; set; }
-        
-        public IReadOnlyCollection<ServiceEndPoint> EndPoints { get; set; }
-    }
-    
+﻿namespace FeiniuBus.Grpc.LoadBalancer.Abstractions
+{   
     public class ServiceEndPoint
     {
         public string Id { get; set; }

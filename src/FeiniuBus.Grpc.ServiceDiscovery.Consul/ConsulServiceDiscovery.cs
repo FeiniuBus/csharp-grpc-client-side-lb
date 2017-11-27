@@ -1,28 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Consul;
 using FeiniuBus.Grpc.LoadBalancer.Abstractions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
 {
     public class ConsulServiceDiscovery : IServiceDiscovery
     {
         private readonly ServiceDiscoveryConsulOptions _options;
+        private readonly IServiceDiscoveryCache _cache;
+        private readonly IServiceChangeTokenManager _manager;
+        private readonly ILogger _logger;
 
-        public ConsulServiceDiscovery(IOptions<ServiceDiscoveryConsulOptions> options)
+        public ConsulServiceDiscovery(IOptions<ServiceDiscoveryConsulOptions> options, IServiceDiscoveryCache cache,
+            IServiceChangeTokenManager manager, ILogger<ConsulServiceDiscovery> logger)
         {
             _options = options.Value;
+            _cache = cache;
+            _manager = manager;
+            _logger = logger;
         }
 
-        public async Task<ServiceQueryResult> FindServiceEndpointAsync(string name)
+        public IEnumerable<ServiceEndPoint> FindServiceEndpoint(string name)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            return _cache.GetOrAdd(name, RemoteServiceEndpoint);
+        }
 
+        private IEnumerable<ServiceEndPoint> RemoteServiceEndpoint(string name)
+        {
             var client = ConsulClientFactory.CreateConsulClient(_options);
             var queryOptions = QueryOptions.Default;
             queryOptions.Consistency = ConsistencyMode.Stale;
@@ -30,13 +40,19 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
             {
                 queryOptions.Token = _options.Token;
             }
-            
-            var queryResult = await client.Health.Service(name, "", true, queryOptions).ConfigureAwait(false);
-            var result = new ServiceQueryResult
+
+            var queryResult = client.Health.Service(name, "", true, queryOptions).ConfigureAwait(false).GetAwaiter()
+                .GetResult();
+
+            if (!_manager.Contains(name))
             {
-                LastIndex = queryResult.LastIndex,
-                EndPoints = new List<ServiceEndPoint>()
-            };
+                var token = new ServiceChangeToken(name, queryResult.LastIndex);
+                if (_manager.TryAdd(name, token))
+                {
+                    ThreadPool.QueueUserWorkItem(Watch, token);
+                    ChangeToken.OnChange(() => token, InvokeChanged, token.Name);
+                }
+            }
             
             var list = new List<ServiceEndPoint>();
             foreach (var entry in queryResult.Response)
@@ -50,9 +66,54 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
                 
                 list.Add(endpoint);
             }
+            return list;
+        }
 
-            result.EndPoints = list.AsReadOnly();
-            return result;
+        private void Watch(object state)
+        {
+            var token = (ServiceChangeToken) state;
+            var client = new ConsulClient(c =>
+            {
+                c.Address = ConsulClientFactory.BuildConsulUri(_options);
+                c.Datacenter = _options.Datacenter;
+                c.WaitTime = c.WaitTime;
+            });
+            
+            var queryOptions = QueryOptions.Default;
+            if (!string.IsNullOrEmpty(_options.Token))
+            {
+                queryOptions.Token = _options.Token;
+            }
+
+            ulong lastIndex = token.LastIndex;
+            while (true)
+            {
+                queryOptions.WaitIndex = lastIndex;
+                try
+                {
+                    var result = client.Health.Service(token.Name, "", true, queryOptions).ConfigureAwait(false)
+                        .GetAwaiter().GetResult();
+
+                    if (result.LastIndex != lastIndex)
+                    {
+                        lastIndex = result.LastIndex;
+                        token.OnChange();
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(0, e, "");
+                }
+            }
+        }
+
+        private void InvokeChanged(string name)
+        {
+            _cache.TryRemove(name);
+            _cache.GetOrAdd(name, RemoteServiceEndpoint);
         }
     }
 }

@@ -26,7 +26,9 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
                 .Singleton<IPostConfigureOptions<ServiceDiscoveryConsulOptions>,
                     PostConfigureServiceDiscoveryConsulOptions>());
 
-            services.AddSingleton<IServiceDiscovery, ConsulServiceDiscovery>();
+            services.TryAdd(ServiceDescriptor.Singleton<IServiceDiscoveryCache, ServiceDiscoveryCache>());
+            services.TryAdd(ServiceDescriptor.Singleton<IServiceChangeTokenManager, ServiceChangeTokenManager>());
+            services.TryAdd(ServiceDescriptor.Singleton<IServiceDiscovery, ConsulServiceDiscovery>());
 
             return services;
         }

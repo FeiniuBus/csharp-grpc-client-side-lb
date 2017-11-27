@@ -53,18 +53,23 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
             }
         }
 
+        internal static Uri BuildConsulUri(ServiceDiscoveryConsulOptions options)
+        {
+            var builder = new UriBuilder
+            {
+                Host = options.Address,
+                Port = options.Port,
+                Scheme = options.Scheme
+            };
+
+            return builder.Uri;
+        }
+
         private static IConsulClient NewConsulClient(ServiceDiscoveryConsulOptions options)
         {
             var client = new ConsulClient(c =>
             {
-                var builder = new UriBuilder
-                {
-                    Host = options.Address,
-                    Port = options.Port,
-                    Scheme = options.Scheme
-                };
-
-                c.Address = builder.Uri;
+                c.Address = BuildConsulUri(options);
                 c.Datacenter = options.Datacenter;
                 c.WaitTime = options.WaitTime;
             });

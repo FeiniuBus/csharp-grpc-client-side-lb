@@ -5,6 +5,6 @@ namespace FeiniuBus.Grpc.LoadBalancer.Abstractions
 {
     public interface IServiceDiscovery
     {
-        Task<IEnumerable<ServiceEndPoint>> FindServiceEndpointAsync(string name);
+        Task<ServiceQueryResult> FindServiceEndpointAsync(string name);
     }
 }

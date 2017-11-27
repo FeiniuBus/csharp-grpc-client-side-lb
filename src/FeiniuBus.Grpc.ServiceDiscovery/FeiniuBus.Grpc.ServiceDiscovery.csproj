@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FeiniuBus.Grpc.LoadBalancer.Abstractions\FeiniuBus.Grpc.LoadBalancer.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

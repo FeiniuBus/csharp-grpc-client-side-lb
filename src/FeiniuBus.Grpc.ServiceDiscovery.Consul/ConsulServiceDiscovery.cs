@@ -61,7 +61,10 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
                 {
                     Id = entry.Service.ID,
                     Address = entry.Service.Address,
-                    Port = entry.Service.Port
+                    Port = entry.Service.Port,
+                    Weight = 1,
+                    EffectiveWeight = 1,
+                    CurrentWeight = 0
                 };
                 
                 list.Add(endpoint);

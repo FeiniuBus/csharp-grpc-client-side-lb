@@ -1,4 +1,5 @@
-﻿using FeiniuBus.Grpc.LoadBalancer.Abstractions;
+﻿using System.Linq;
+using FeiniuBus.Grpc.LoadBalancer.Abstractions;
 
 namespace FeiniuBus.Grpc.LoadBalancer.RoundRobin
 {
@@ -13,7 +14,43 @@ namespace FeiniuBus.Grpc.LoadBalancer.RoundRobin
         
         public ServiceEndPoint Peer(string serviceName)
         {
-            throw new System.NotImplementedException();
+            var entries = _serviceDiscovery.FindServiceEndpoint(serviceName).ToList();
+            if (entries.Count == 0)
+            {
+                return null;
+            }
+
+            if (entries.Count == 1)
+            {
+                return entries[0];
+            }
+
+            int total = 0;
+            ServiceEndPoint best = null;
+            
+            foreach (var entry in entries)
+            {
+                entry.CurrentWeight += entry.EffectiveWeight;
+                total += entry.EffectiveWeight;
+
+                if (entry.EffectiveWeight < entry.Weight)
+                {
+                    entry.EffectiveWeight++;
+                }
+
+                if (best == null || entry.CurrentWeight > best.CurrentWeight)
+                {
+                    best = entry;
+                }
+            }
+
+            if (best == null)
+            {
+                return null;
+            }
+
+            best.CurrentWeight -= total;
+            return best;
         }
     }
 }

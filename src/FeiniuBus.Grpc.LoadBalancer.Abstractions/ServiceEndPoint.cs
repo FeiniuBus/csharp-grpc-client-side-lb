@@ -7,5 +7,11 @@
         public string Address { get; set; }
         
         public int Port { get; set; }
+        
+        public int Weight { get; set; }
+        
+        public int EffectiveWeight { get; set; }
+        
+        public int CurrentWeight { get; set; }
     }
 }

@@ -85,18 +85,17 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
                 queryOptions.Token = _options.Token;
             }
 
-            ulong lastIndex = token.LastIndex;
             while (true)
             {
-                queryOptions.WaitIndex = lastIndex;
+                queryOptions.WaitIndex = token.LastIndex;
                 try
                 {
                     var result = client.Health.Service(token.Name, "", true, queryOptions).ConfigureAwait(false)
                         .GetAwaiter().GetResult();
 
-                    if (result.LastIndex != lastIndex)
+                    if (result.LastIndex != token.LastIndex)
                     {
-                        lastIndex = result.LastIndex;
+                        token.LastIndex = result.LastIndex;
                         token.OnChange();
                     }
                 }
@@ -105,7 +104,7 @@ namespace FeiniuBus.Grpc.ServiceDiscovery.Consul
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(0, e, "");
+                    _logger.LogError(0, e, "监控远程服务时出错");
                 }
             }
         }
